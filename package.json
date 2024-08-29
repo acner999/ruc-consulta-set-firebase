@@ -1,8 +1,8 @@
 {
   "name": "consulta_ruc_set",
   "version": "1.0.0",
-  "description": "consulta de ruc directamente desde la set",
-
+  "main": "functions/index.js",
+  "description": "consulta de ruc directamente desde en la set mediante firebase cloud functions",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
