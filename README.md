@@ -4,12 +4,13 @@
 URL: [Previsualización del Proyecto](https://rucconsulta-4d509.web.app) 
 Este proyecto permite consultar el RUC (Registro Único de Contribuyentes) a través de una API que realiza una llamada directa a un servicio de consulta. Utiliza Firebase Cloud Functions para manejar las solicitudes y cifrar los datos.
 ![Vista Previa del Proyecto](https://github.com/user-attachments/assets/1e785f80-2e72-437d-82f5-6e2dd8a25134)
-
-
 ## Descripción
 
 La aplicación consulta el RUC y el dígito verificador utilizando una API externa. Los datos se cifran antes de enviarlos a la API para proteger la información sensible. La aplicación está alojada en Firebase y utiliza Firebase Cloud Functions para la lógica del servidor.
 y utilizo el firebase hosting para alojar el archivo html
+
+## SIEMPRE "ACTUALIZADAS"
+Al consultar directamente desde la set entonces las consultas y los datos son actualizados y no se necesita programas para guardado de datos masivos ni actualizaciones periodicas con cron
 
 ## Tecnologías Utilizadas
 
