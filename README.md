@@ -1,6 +1,7 @@
-# Buscar Ruc en la SET, con firebase
+[repository-open-graph-template](https://github.com/user-attachments/assets/11af02d7-2ee5-43f3-9630-3c4648cd4fb2)
+# Buscar Ruc en la SET, con firebase!
 
-URL: [Previsualización del Proyecto](https://rucconsulta-4d509.web.app)
+URL: [Previsualización del Proyecto](https://rucconsulta-4d509.web.app) 
 Este proyecto permite consultar el RUC (Registro Único de Contribuyentes) a través de una API que realiza una llamada directa a un servicio de consulta. Utiliza Firebase Cloud Functions para manejar las solicitudes y cifrar los datos.
 
 ## Descripción
