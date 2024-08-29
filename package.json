@@ -4,7 +4,7 @@
   "description": "consulta de ruc directamente desde en la set mediante firebase cloud functions",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm install && npm install -g firebase-tools && cd ./functions && firebase login && firebase deploy --token 1//0hFD0nJY20rV1CgYIARAAGBESNwF-L9Ir37kotyhMDs0ykozX7Q7irKndg0wb6cRUpbAycgNV4wWMmsxdH4y23ndvNxcv63kk7yk"
+    "build": "npm install && npm install -g firebase-tools && cd ./functions && firebase deploy --token 1//0hFD0nJY20rV1CgYIARAAGBESNwF-L9Ir37kotyhMDs0ykozX7Q7irKndg0wb6cRUpbAycgNV4wWMmsxdH4y23ndvNxcv63kk7yk"
   },
   "author": "",
   "license": "ISC"
