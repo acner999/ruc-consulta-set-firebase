@@ -6,7 +6,7 @@
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy": "firebase deploy --token 1//0hFD0nJY20rV1CgYIARAAGBESNwF-L9Ir37kotyhMDs0ykozX7Q7irKndg0wb6cRUpbAycgNV4wWMmsxdH4y23ndvNxcv63kk7yk",
     "logs": "firebase functions:log"
   },
   "engines": {
