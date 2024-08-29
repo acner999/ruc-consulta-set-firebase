@@ -2,15 +2,14 @@
   "name": "consulta_ruc_set",
   "version": "1.0.0",
   "main": "functions/index.js",
-  "lint": "eslint .",
-  "serve": "firebase emulators:start --only functions",
-  "shell": "firebase functions:shell",
-  "start": "npm run shell",
-  "deploy": "firebase deploy --only functions",
-  "logs": "firebase functions:log",
-  "description": "consulta de ruc directamente desde en la set mediante firebase cloud functions",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "consulta de ruc directamente desde en la set mediante firebase cloud functions", 
+   "scripts": {
+    "lint": "eslint .",
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
   },
   "author": "",
   "license": "ISC"
