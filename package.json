@@ -2,11 +2,11 @@
   "name": "consulta_ruc_set",
   "version": "1.0.0",
   "main": "functions/index.js",
-  "description": "consulta de ruc directamente desde en la set mediante firebase cloud functions", 
+  "description": "consulta de ruc directamente desde en la set mediante firebase cloud functions",
   "scripts": {
-      "build": "npm run build", 
-      "start": "firebase serve"
-    },
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": " cd ./functions && npm run deploy"
+  },
   "author": "",
   "license": "ISC"
 }
