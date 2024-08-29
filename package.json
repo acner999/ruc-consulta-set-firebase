@@ -4,7 +4,7 @@
   "description": "consulta de ruc directamente desde en la set mediante firebase cloud functions",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm install &&  npm run deploy"
+    "build": "npm install && npm install -g firebase-tools && npm run deploy"
   },
   "author": "",
   "license": "ISC"
