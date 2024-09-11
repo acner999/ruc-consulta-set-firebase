@@ -8,7 +8,7 @@ Este proyecto permite consultar el RUC (Registro Único de Contribuyentes) a tra
 
 La aplicación consulta el RUC y el dígito verificador utilizando una API externa. Los datos se cifran antes de enviarlos a la API para proteger la información sensible. La aplicación está alojada en Firebase y utiliza Firebase Cloud Functions para la lógica del servidor.
 y utilizo el firebase hosting para alojar el archivo html
-
+las consultas se guardan en una base de datos en tiempo real de firestore.
 ## SIEMPRE "ACTUALIZADAS"
 Al consultar directamente desde la set entonces las consultas y los datos son actualizados y no se necesita programas para guardado de datos masivos ni actualizaciones periodicas con cron
 

@@ -4,8 +4,13 @@ const logger = require("firebase-functions/logger");
 const axios = require("axios");
 const CryptoJS = require("crypto-js");
 const cors = require("cors"); // Importar el paquete cors
+const admin = require("firebase-admin"); // Importar el SDK de admin de Firebase
+
 
 const config = require("./config"); // Importar archivo de configuración
+
+admin.initializeApp(); // Inicializar la aplicación de Firebase Admin
+const db = admin.firestore(); // Obtener la referencia a Firestore
 
 // Claves y vector de inicialización (IV) para el cifrado
 const key = CryptoJS.enc.Base64.parse(config.crypto.key);
@@ -61,8 +66,18 @@ exports.consultarRUC = onRequest(async (request, response) => {
       const razonSocial = apiResponse.data.trim();
 
       logger.info("Consulta de RUC exitosa", {ruc, razonSocial,
-        encryptedData: encrypt,
-        decrypt: decrypt(encrypt)});
+        encryptedData: encrypt, // Agregar la coma final aquí
+        decrypt: decrypt(encrypt),
+      });
+
+      // Guardar los datos en Firestore
+      await db.collection("ruc-consultas").add({
+        ruc: ruc,
+        dv: dv,
+        razonSocial: razonSocial,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(), // Guardar la fecha/hora de la consulta
+      });
+
       response.status(200).send({razonSocial});
     } catch (error) {
       logger.error("Error al consultar el RUC", {error: error.message});
