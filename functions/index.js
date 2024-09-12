@@ -3,22 +3,22 @@ const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const axios = require("axios");
 const CryptoJS = require("crypto-js");
-const cors = require("cors"); // Importar el paquete cors
+const cors = require("cors");
 const admin = require("firebase-admin"); // Importar el SDK de admin de Firebase
+const config = require("./config");
+const serviceAccount = require("./configadmin.json");
 
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://rucconsulta-4d509-default-rtdb.firebaseio.com",
+});
+const db = admin.database();
 
-const config = require("./config"); // Importar archivo de configuración
-
-admin.initializeApp(); // Inicializar la aplicación de Firebase Admin
-const db = admin.firestore(); // Obtener la referencia a Firestore
-
-// Claves y vector de inicialización (IV) para el cifrado
 const key = CryptoJS.enc.Base64.parse(config.crypto.key);
 const iv = CryptoJS.enc.Base64.parse(config.crypto.iv);
 
-// Configurar CORS
 const corsHandler = cors({
-  origin: true, // Permitir todas las solicitudes
+  origin: true,
 });
 
 function encrypt(ruc, dv) {
@@ -46,7 +46,6 @@ exports.helloWorld = onRequest((request, response) => {
 });
 
 exports.consultarRUC = onRequest(async (request, response) => {
-  // Aplicar el middleware CORS
   corsHandler(request, response, async () => {
     const {ruc, dv} = request.query;
 
@@ -60,23 +59,24 @@ exports.consultarRUC = onRequest(async (request, response) => {
       logger.info("Datos cifrados para la consulta", {dato});
 
       const api = `${config.url}/validezDocumento/contribuyente?t3=${encodeURIComponent(dato)}`;
-
       const apiResponse = await axios.get(api);
-
       const razonSocial = apiResponse.data.trim();
 
       logger.info("Consulta de RUC exitosa", {ruc, razonSocial,
-        encryptedData: encrypt, // Agregar la coma final aquí
-        decrypt: decrypt(encrypt),
-      });
+        encryptedData: encrypt,
+        decrypt: decrypt(encrypt)});
+      try {
+        // Guardar los datos en Firestore
+        await agregarRucConSufijo(ruc+"-"+dv, {
+          ruc: ruc,
+          dv: dv,
+          razonSocial: razonSocial,
+          timestamp: Date.now(), // Guardar la fecha/hora de la consulta
+        });
+      } catch (e) {
+        logger.info("error al insertar", e);
+      }
 
-      // Guardar los datos en Firestore
-      await db.collection("ruc-consultas").add({
-        ruc: ruc,
-        dv: dv,
-        razonSocial: razonSocial,
-        timestamp: admin.firestore.FieldValue.serverTimestamp(), // Guardar la fecha/hora de la consulta
-      });
 
       response.status(200).send({razonSocial});
     } catch (error) {
@@ -84,4 +84,28 @@ exports.consultarRUC = onRequest(async (request, response) => {
       response.status(500).send(error);
     }
   });
+
+
+  // Función para agregar datos de un RUC
+  // Función para agregar datos de un RUC con sufijo incremental si ya existe
+  async function agregarRucConSufijo(ruc, data) {
+    let rucFinal = ruc;
+    let suffix = 1; // Comenzar con sufijo 1
+
+    // Verificar si el RUC ya existe
+    while (await db.ref("rucs/" + rucFinal).once("value").then((snapshot) => snapshot.exists())) {
+      rucFinal = `${ruc}_${suffix}`; // Agregar sufijo al RUC
+      suffix++;
+    }
+
+    // Agregar un timestamp con la fecha actual
+    const dataConFecha = {
+      ...data,
+      fecha_creacion: new Date().toISOString(), // Formato de fecha ISO 8601
+    };
+
+    // Agregar los datos a la base de datos
+    await db.ref("rucs/" + rucFinal).set(dataConFecha);
+    console.log(`Datos agregados correctamente bajo el RUC ${rucFinal}.`);
+  }
 });
