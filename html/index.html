@@ -184,7 +184,7 @@
                 const response = await fetch(`https://consultarruc-jkqw6ztc5a-uc.a.run.app?ruc=${ruc}&dv=${dv}`);
                 if (response.ok) {
                     const data = await response.json();
-                    resultadoElement.innerHTML = `<div class="result-success"><b>Razón Social:</b> ${data.razonSocial}</div>`;
+                    resultadoElement.innerHTML = `<div class="result-success"><b>Razón Social:</b> ${data.nombreCompleto}<br> <b>Estado:</b> ${data.estado}</div>`;
                 } else {
                     resultadoElement.innerHTML = `<div class="result-error">No existe el RUC: ${ruc} con el dígito verificador ${dv}.</div>`;
                 }

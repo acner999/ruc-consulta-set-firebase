@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 const axios = require("axios");
@@ -40,11 +39,6 @@ function decrypt(encryptedText) {
   return decrypted.toString(CryptoJS.enc.Utf8);
 }
 
-exports.helloWorld = onRequest((request, response) => {
-  logger.info("Hola logs!", {structuredData: true});
-  response.send("Hola from Firebase!");
-});
-
 exports.consultarRUC = onRequest(async (request, response) => {
   corsHandler(request, response, async () => {
     const {ruc, dv} = request.query;
@@ -58,42 +52,77 @@ exports.consultarRUC = onRequest(async (request, response) => {
       const dato = encrypt(ruc, dv);
       logger.info("Datos cifrados para la consulta", {dato});
 
-      const api = `${config.url}/validezDocumento/contribuyente?t3=${encodeURIComponent(dato)}`;
+      // Nueva URL del API
+      const api = `${config.url2}?t3=${encodeURIComponent(dato)}`;
       const apiResponse = await axios.get(api);
-      const razonSocial = apiResponse.data.trim();
 
-      logger.info("Consulta de RUC exitosa", {ruc, razonSocial,
+      // Extraer datos de la nueva respuesta
+      const {
+        ruc: rucResp,
+        dv: dvResp,
+        estado,
+        nombreCompleto,
+        tipoContribuyente,
+        tipoSociedad,
+        nombreRazonSocial,
+      } = apiResponse.data;
+
+      logger.info("Consulta de RUC exitosa", {
+        rucResp,
+        dvResp,
+        estado,
+        nombreCompleto,
+        tipoContribuyente,
+        tipoSociedad,
+        nombreRazonSocial,
         encryptedData: encrypt,
-        decrypt: decrypt(encrypt)});
+        decrypt: decrypt(encrypt),
+      });
+
       try {
-        // Guardar los datos en Firestore
-        await agregarRucConSufijo(ruc+"-"+dv, {
-          ruc: ruc,
-          dv: dv,
-          razonSocial: razonSocial,
+        // Guardar todos los datos en Firebase
+        await agregarRucConSufijo(ruc + "-" + dv, {
+          ruc: rucResp,
+          dv: dvResp,
+          estado: estado,
+          nombreCompleto: nombreCompleto,
+          tipoContribuyente: tipoContribuyente,
+          tipoSociedad: tipoSociedad,
+          nombreRazonSocial: nombreRazonSocial,
           timestamp: Date.now(), // Guardar la fecha/hora de la consulta
         });
       } catch (e) {
-        logger.info("error al insertar", e);
+        logger.error("Error al insertar en la base de datos", e);
       }
 
-
-      response.status(200).send({razonSocial});
+      // Enviar la respuesta con los datos recibidos
+      response.status(200).send({
+        ruc: rucResp,
+        dv: dvResp,
+        estado,
+        nombreCompleto,
+        tipoContribuyente,
+        tipoSociedad,
+        nombreRazonSocial,
+      });
     } catch (error) {
       logger.error("Error al consultar el RUC", {error: error.message});
       response.status(500).send(error);
     }
   });
 
-
-  // Función para agregar datos de un RUC
   // Función para agregar datos de un RUC con sufijo incremental si ya existe
   async function agregarRucConSufijo(ruc, data) {
     let rucFinal = ruc;
     let suffix = 1; // Comenzar con sufijo 1
 
     // Verificar si el RUC ya existe
-    while (await db.ref("rucs/" + rucFinal).once("value").then((snapshot) => snapshot.exists())) {
+    while (
+      await db
+          .ref("rucs/" + rucFinal)
+          .once("value")
+          .then((snapshot) => snapshot.exists())
+    ) {
       rucFinal = `${ruc}_${suffix}`; // Agregar sufijo al RUC
       suffix++;
     }
